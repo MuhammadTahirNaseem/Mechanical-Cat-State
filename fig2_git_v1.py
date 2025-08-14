@@ -27,7 +27,7 @@ xvec   = np.linspace(-xlim, xlim, nx)
 # ------------------------------------------------------------
 # 1) EFFECTIVE MODEL (oscillator only)
 # ------------------------------------------------------------
-N_eff     = 30
+N_eff     = 50
 a         = destroy(N_eff)
 adag      = a.dag()
 
@@ -76,7 +76,7 @@ states_eff = res_eff.states
 # ------------------------------------------------------------
 # 2) FULL MODEL (qubit + oscillator) — all in kappa units
 # ------------------------------------------------------------
-Na, Nb = 2, 30
+Na, Nb = 2, 50
 b      = tensor(qeye(Na), destroy(Nb))
 bd     = b.dag()
 
@@ -220,3 +220,4 @@ fig.tight_layout()
 #fig.savefig('appendix_full_vs_effective_composite.png', dpi=600, bbox_inches='tight')
 #fig.savefig('appendix_full_vs_effective_composite.pdf',  dpi=600, bbox_inches='tight')
 plt.show()
+
