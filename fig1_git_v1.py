@@ -14,7 +14,7 @@ from qutip import *
 # ---------------------------
 
 # Hilbert space dimension
-N = 40
+N = 60
 
 # System parameters (Hz)
 gz  = 2 * np.pi * 6e6         # Longitudinal coupling
@@ -137,5 +137,6 @@ for j, state in enumerate(result.states):
     # Save and display
     fig.savefig(f"wigner_panel_{j+1}.pdf", bbox_inches='tight')
     plt.show()
+
 
 
