@@ -3,6 +3,7 @@
 Composite figure (3 panels): (a) Wigner snapshots (left, 2×4 + colorbar),
 (b) Fidelity (right-top), (c) Mean phonon number (right-bottom).
 
+Clean layout, matched left/right heights, thin ticks/spines on right.
 """
 
 import numpy as np
@@ -12,7 +13,7 @@ from qutip import *
 from qutip.metrics import fidelity as state_fidelity
 
 # ------------------------------------------------------------
-# 0) Simulation settings (tweak N/timesteps if need speed)
+# 0) Simulation settings (tweak N/timesteps if you need speed)
 # ------------------------------------------------------------
 tau_max   = 39.0            # simulation window in units of kappa^{-1}
 n_steps   = 120              # time resolution
@@ -41,9 +42,10 @@ kappa     = 2*np.pi*100e3        # qubit decay rate
 gamma_m   = 2*np.pi*15           # mech. damping
 n_th      = 0
 
-g         = gz*gx/omega_m        # two-phonon coupling
-ϵ         =  2 * g
-chi       = -2j * ϵ * g / kappa
+g        = gz*gx/omega_m        # two-phonon coupling
+beta      = 2
+Omega     = beta**2 * g
+chi       = -1j * Omega * g / kappa
 
 x         = kappa/2
 D1m, D1p  = omega_q - omega_m,  omega_q + omega_m
@@ -52,6 +54,7 @@ D2m, D2p  = omega_q - 2*omega_m, omega_q + 2*omega_m
 # single-phonon rates
 G1m = 2*gx**2 * x / (x**2 + D1m**2)
 G1p = 2*gx**2 * x / (x**2 + D1p**2)
+Gm  = (n_th + 1)*gamma_m + G1m
 Gp  =  n_th      *gamma_m + G1p
 
 # two-phonon rates
@@ -85,8 +88,8 @@ gz_d, om_m, Gam_m = gz_org/kappa_org, omega_m_org/kappa_org, Gamma_m_org/kappa_o
 kap = 1.0 # kappa/kappa
 
 gx_dim = r*gz_d
-g_dim = gz_d*gx_dim/om_m
-Omega = 4 * g_dim
+g2_dim = gz_d*gx_dim/om_m
+eps_d  = 1.0 * beta**2 * g2_dim
 
 sm, sp, sz, sx = tensor(sigmam(), qeye(Nb)), tensor(sigmap(), qeye(Nb)), tensor(sigmaz(), qeye(Nb)), tensor(sigmax(), qeye(Nb))
 omega_q_dim = 2*om_m
@@ -99,8 +102,8 @@ H = [
     [gx_dim * sx * bd,     lambda t, _: np.exp(+1j * om_m * t)],
     [gz_d   * sz * b,      lambda t, _: np.exp(-1j * om_m * t)],
     [gz_d   * sz * bd,     lambda t, _: np.exp(+1j * om_m * t)],
-    [Omega  * sx,          lambda t, _: np.exp(+1j * omega_d_dim * t)],
-    [Omega  * sx,          lambda t, _: np.exp(-1j * omega_d_dim * t)],
+    [eps_d  * sx,          lambda t, _: np.exp(+1j * omega_d_dim * t)],
+    [eps_d  * sx,          lambda t, _: np.exp(-1j * omega_d_dim * t)],
 ]
 
 diss_full = [kap*lindblad_dissipator(sm),
@@ -192,8 +195,7 @@ ax_fid = fig.add_subplot(gs[0, 1])
 ax_n   = fig.add_subplot(gs[1, 1], sharex=ax_fid)
 
 # Fidelity
-ax_fid.plot(tau, fidelity_t, '-', lw=1.2, color='tab:blue',
-            label=r'$F(\rho_{\mathrm{full}}^{\mathrm{red}},\,\rho_{\mathrm{eff}})$')
+ax_fid.plot(tau, fidelity_t, '-', lw=1.2, color='tab:blue')
 ax_fid.set_ylabel('Fidelity', fontsize=10)
 ax_fid.legend(fontsize=7, frameon=False, loc='lower right')
 ax_fid.grid(True, alpha=0.12)
@@ -217,9 +219,6 @@ for ax in (ax_fid, ax_n):
         ax.spines[s].set_linewidth(0.6)
 
 fig.tight_layout()
-#fig.savefig('appendix_full_vs_effective_composite.png', dpi=600, bbox_inches='tight')
-#fig.savefig('appendix_full_vs_effective_composite.pdf',  dpi=600, bbox_inches='tight')
+fig.savefig('appendix_full_vs_effective_composite.png', dpi=600, bbox_inches='tight')
+fig.savefig('appendix_full_vs_effective_composite.pdf',  dpi=600, bbox_inches='tight')
 plt.show()
-
-
-
