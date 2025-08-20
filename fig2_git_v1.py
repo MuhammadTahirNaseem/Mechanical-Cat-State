@@ -62,8 +62,8 @@ G2p = 2*g**2 * x / (x**2 + D2p**2)
 dk  = g**2 * (-D2m/(x**2+D2m**2) - D2p/(x**2+D2p**2))
 
 H_eff = chi.conjugate()*adag**2 + chi*a**2 + dk*(adag*a)**2
-diss_eff = [Gm*lindblad_dissipator(a),
-            Gp*lindblad_dissipator(adag),
+diss_eff = [G1m*lindblad_dissipator(a),
+            G1p*lindblad_dissipator(adag),
             G2m*lindblad_dissipator(a**2),
             G2p*lindblad_dissipator(adag**2)]
 
@@ -220,4 +220,5 @@ fig.tight_layout()
 #fig.savefig('appendix_full_vs_effective_composite.png', dpi=600, bbox_inches='tight')
 #fig.savefig('appendix_full_vs_effective_composite.pdf',  dpi=600, bbox_inches='tight')
 plt.show()
+
 
