@@ -3,7 +3,6 @@
 Composite figure (3 panels): (a) Wigner snapshots (left, 2×4 + colorbar),
 (b) Fidelity (right-top), (c) Mean phonon number (right-bottom).
 
-Clean layout, matched left/right heights, thin ticks/spines on right.
 """
 
 import numpy as np
@@ -13,7 +12,7 @@ from qutip import *
 from qutip.metrics import fidelity as state_fidelity
 
 # ------------------------------------------------------------
-# 0) Simulation settings (tweak N/timesteps if you need speed)
+# 0) Simulation settings (tweak N/timesteps if need speed)
 # ------------------------------------------------------------
 tau_max   = 39.0            # simulation window in units of kappa^{-1}
 n_steps   = 120              # time resolution
@@ -42,10 +41,9 @@ kappa     = 2*np.pi*100e3        # qubit decay rate
 gamma_m   = 2*np.pi*15           # mech. damping
 n_th      = 0
 
-g        = gz*gx/omega_m        # two-phonon coupling
-beta      = 2
-Omega     = beta**2 * g
-chi       = -1j * Omega * g / kappa
+g         = gz*gx/omega_m        # two-phonon coupling
+ϵ         =  2 * g
+chi       = -2j * ϵ * g / kappa
 
 x         = kappa/2
 D1m, D1p  = omega_q - omega_m,  omega_q + omega_m
@@ -54,7 +52,6 @@ D2m, D2p  = omega_q - 2*omega_m, omega_q + 2*omega_m
 # single-phonon rates
 G1m = 2*gx**2 * x / (x**2 + D1m**2)
 G1p = 2*gx**2 * x / (x**2 + D1p**2)
-Gm  = (n_th + 1)*gamma_m + G1m
 Gp  =  n_th      *gamma_m + G1p
 
 # two-phonon rates
@@ -65,8 +62,8 @@ G2p = 2*g**2 * x / (x**2 + D2p**2)
 dk  = g**2 * (-D2m/(x**2+D2m**2) - D2p/(x**2+D2p**2))
 
 H_eff = chi.conjugate()*adag**2 + chi*a**2 + dk*(adag*a)**2
-diss_eff = [Gm*lindblad_dissipator(a),
-            Gp*lindblad_dissipator(adag),
+diss_eff = [G1m*lindblad_dissipator(a),
+            G1p*lindblad_dissipator(adag),
             G2m*lindblad_dissipator(a**2),
             G2p*lindblad_dissipator(adag**2)]
 
@@ -88,8 +85,8 @@ gz_d, om_m, Gam_m = gz_org/kappa_org, omega_m_org/kappa_org, Gamma_m_org/kappa_o
 kap = 1.0 # kappa/kappa
 
 gx_dim = r*gz_d
-g2_dim = gz_d*gx_dim/om_m
-eps_d  = 1.0 * beta**2 * g2_dim
+g_dim = gz_d*gx_dim/om_m
+Omega = 4 * g_dim
 
 sm, sp, sz, sx = tensor(sigmam(), qeye(Nb)), tensor(sigmap(), qeye(Nb)), tensor(sigmaz(), qeye(Nb)), tensor(sigmax(), qeye(Nb))
 omega_q_dim = 2*om_m
@@ -102,8 +99,8 @@ H = [
     [gx_dim * sx * bd,     lambda t, _: np.exp(+1j * om_m * t)],
     [gz_d   * sz * b,      lambda t, _: np.exp(-1j * om_m * t)],
     [gz_d   * sz * bd,     lambda t, _: np.exp(+1j * om_m * t)],
-    [eps_d  * sx,          lambda t, _: np.exp(+1j * omega_d_dim * t)],
-    [eps_d  * sx,          lambda t, _: np.exp(-1j * omega_d_dim * t)],
+    [Omega  * sx,          lambda t, _: np.exp(+1j * omega_d_dim * t)],
+    [Omega  * sx,          lambda t, _: np.exp(-1j * omega_d_dim * t)],
 ]
 
 diss_full = [kap*lindblad_dissipator(sm),
