@@ -388,9 +388,6 @@ scans = {
 
 results = {}
 
-
-
-
 for key, grid in scans.items():
     
 
@@ -426,10 +423,6 @@ for key, grid in scans.items():
 
         # Store results:
         F_list.append(F)
-
-
-
-
 
     # Put arrays into 'results' under this scan key:
     results[key] = {
@@ -484,3 +477,4 @@ for ax, key in zip(axes, scan_order):
 
 plt.tight_layout()
 plt.show()
+
