@@ -2,7 +2,7 @@
 """
 Cooling vs g_z for Appendix E:
 
-- Full effective ME (A1) solved with QuTiP steady state.
+- Full effective ME Eq. (17) solved with QuTiP steady state.
 - Coherent-closure estimate n_ss ≃ 2|chi| / Gamma2_minus = Omega / (2 g)
   with epsilon = Omega / 2 (Omega fixed, independent of g_z).
 
@@ -185,4 +185,5 @@ fig.savefig("cooling_vs_gz.png", dpi=600, bbox_inches="tight")
 fig.savefig("cooling_vs_gz.pdf", dpi=600, bbox_inches="tight")
 
 plt.show()
+
 
