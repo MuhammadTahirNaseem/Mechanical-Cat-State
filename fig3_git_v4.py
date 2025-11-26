@@ -119,7 +119,7 @@ options  = Options(
 # -------------------------
 # Na: dimension of qubit Hilbert space = 2 (|g>, |e>)
 # Nb: dimension of oscillator Hilbert space = 8 (Fock states |0>,...,|7>)
-Na, Nb   = 2, 80   # small dimension to keep simulations fast
+Na, Nb   = 2, 80   # Hilber space dimensions
 
 
 # ============================================================
@@ -507,4 +507,5 @@ for ax, key in zip(axes, scan_order):
 
 plt.tight_layout()
 plt.show()
+
 
