@@ -95,7 +95,7 @@ alpha    = 0.25           # small coherent seed (n̄ ≈ |alpha|^2 = 0.0625)
 # -------------------------------
 # We simulate from t = 0 to t = t_max and divide it into n_steps points.
 t_max    = 20.0           # final time
-n_steps  = 41             # number of time points
+n_steps  = 101             # number of time points
 tlist    = np.linspace(0.0, t_max, n_steps)
 
 # We are particularly interested in the time t_star.
@@ -477,4 +477,5 @@ for ax, key in zip(axes, scan_order):
 
 plt.tight_layout()
 plt.show()
+
 
