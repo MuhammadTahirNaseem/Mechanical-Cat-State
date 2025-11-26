@@ -119,7 +119,7 @@ options  = Options(
 # -------------------------
 # Na: dimension of qubit Hilbert space = 2 (|g>, |e>)
 # Nb: dimension of oscillator Hilbert space = 8 (Fock states |0>,...,|7>)
-Na, Nb   = 2, 80   # Hilber space dimensions
+Na, Nb   = 2, 80   # small dimension to keep simulations fast
 
 
 # ============================================================
@@ -319,7 +319,7 @@ def run_one(om_m, Delta2, gx, gz, Omega, gamma_m):
 
     Returns:
     --------
-    (F, n_full, n_eff) as Python floats.
+    F as Python floats.
     """
 
     # --- Effective model ---
@@ -340,7 +340,7 @@ def run_one(om_m, Delta2, gx, gz, Omega, gamma_m):
     # Fidelity between reduced full state and effective state:
     F = state_fidelity(rho_red, rho_e_t)
 
-    return float(F), float(n_full), float(n_eff)
+    return float(F)
 
 
 # ============================================================
@@ -388,26 +388,11 @@ scans = {
 
 results = {}
 
-def progress_bar(k, n, prefix=""):
-    """
-    Simple text-based progress bar.
-
-    Inputs:
-    -------
-    k : current index (1-based)
-    n : total number of points
-    prefix : text label to show before the bar (e.g. "Omega    ")
-    """
-    w = 26      # bar width
-    p = int(w * (k / n))
-    bar = "█" * p + " " * (w - p)
-    print(f"\r{prefix}[{k:02d}/{n:02d}] |{bar}|", end="", flush=True)
 
 
-print("\nRunning six parameter scans; reporting each point as: F, <n>_full, <n>_eff")
 
 for key, grid in scans.items():
-    print(f"\n--- Scan: {key} ---")
+    
 
     # These lists will collect results for this particular scan:
     F_list, n_full_list, n_eff_list = [], [], []
@@ -437,25 +422,19 @@ for key, grid in scans.items():
             gamma_m= float(val)
 
         # Run one full vs effective comparison:
-        F, n_full, n_eff = run_one(om_m, Delta2, gx, gz, Omega, gamma_m)
+        F = run_one(om_m, Delta2, gx, gz, Omega, gamma_m)
 
         # Store results:
         F_list.append(F)
-        n_full_list.append(n_full)
-        n_eff_list.append(n_eff)
 
-        # Update progress bar and print a concise line:
-        progress_bar(i, len(grid), prefix=f"{key:8s} ")
-        print(f"\n   {key}={val: .4f}   F={F: .6f}   <n>_full={n_full: .4f}   <n>_eff={n_eff: .4f}")
 
-    print(f"   done in {time.time() - t0:.2f}s")
+
+
 
     # Put arrays into 'results' under this scan key:
     results[key] = {
         "x":      np.array(grid),
         "F":      np.array(F_list),
-        "n_full": np.array(n_full_list),
-        "n_eff":  np.array(n_eff_list),
     }
 
 
@@ -463,24 +442,22 @@ for key, grid in scans.items():
 # 4) Save data to disk (CSV + NPZ)
 # ============================================================
 
-# CSV file: each row is (scan, x_value, F, n_full, n_eff)
+# CSV file: each row is (scan, x_value, F)
 csv_path = "detuning_scan_results.csv"   # same filename as before
 with open(csv_path, "w", newline="") as f:
     w = csv.writer(f)
     # Header row:
-    w.writerow(["scan", "x_value", "Fidelity", "nbar_full_at_tstar", "nbar_eff_at_tstar"])
+    w.writerow(["scan", "x_value", "Fidelity"])
     # Data rows:
     for key, pack in results.items():
-        for xv, Fv, nf, ne in zip(pack["x"], pack["F"], pack["n_full"], pack["n_eff"]):
-            w.writerow([key, f"{xv:.12g}", f"{Fv:.12f}", f"{nf:.8f}", f"{ne:.8f}"])
+        for xv, Fv in zip(pack["x"], pack["F"]):
+            w.writerow([key, f"{xv:.12g}", f"{Fv:.12f}"])
 
 # NPZ file: store arrays under convenient names
 np.savez(
     "detuning_scan_results.npz",
     **{f"{key}_x":      pack["x"]      for key, pack in results.items()},
     **{f"{key}_F":      pack["F"]      for key, pack in results.items()},
-    **{f"{key}_n_full": pack["n_full"] for key, pack in results.items()},
-    **{f"{key}_n_eff":  pack["n_eff"]  for key, pack in results.items()},
 )
 
 
@@ -507,5 +484,3 @@ for ax, key in zip(axes, scan_order):
 
 plt.tight_layout()
 plt.show()
-
-
