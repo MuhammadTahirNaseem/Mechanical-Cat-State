@@ -11,7 +11,6 @@ For each n_th in [0, 0.5, 1, 2], we:
 
 This version:
   * Uses x and p in the range [-6, 6].
-  * Prints progress and the final average phonon number <n>.
 """
 
 import numpy as np
@@ -30,7 +29,7 @@ N = 100  # should be large enough to capture the cat state support
 # Longitudinal coupling (σ_z (a + a†))
 gz  = 2 * np.pi * 6e6         # Hz
 
-# Ratio transverse / longitudinal coupling
+# Ratio transverse/longitudinal coupling
 r   = 0.1                     # dimensionless
 
 # Transverse coupling (σ_x (a + a†))
@@ -184,10 +183,6 @@ for idx, n_th in enumerate(n_th_list):
     # Final state at t_final
     ρ_final = result.states[-1]
 
-    # Average phonon number <n> at final time
-    n_avg = expect(n_op, ρ_final)
-    print(f"Average phonon number at t_final for n_th = {n_th}: "
-          f"<n> = {n_avg:.3f}\n")
 
     # -----------------------------------------------
     # 6.4 Wigner function at t_final and plotting
@@ -239,3 +234,4 @@ for idx, n_th in enumerate(n_th_list):
     plt.show()
 
 print("All simulations completed.")
+
