@@ -100,7 +100,7 @@ tlist    = np.linspace(0.0, t_max, n_steps)
 
 # We are particularly interested in the time t_star.
 # We'll extract the state at this time index from the solution.
-t_star   = 100.0                                      # "comparison" time
+t_star   = 20.0                                      # "comparison" time
 idx_star = int(np.argmin(np.abs(tlist - t_star)))    # index closest to t_star
 
 
@@ -507,3 +507,4 @@ for ax, key in zip(axes, scan_order):
 
 plt.tight_layout()
 plt.show()
+
